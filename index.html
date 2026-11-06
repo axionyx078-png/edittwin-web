@@ -1,0 +1,353 @@
+<title>EditTwin prezentace</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;600&display=swap">
+<style>
+/* Záměrně jeden vzhled: černá plocha, červený akcent, monospace štítky. Stránka se „staví“ před očima – kurzory agentů pokládají bloky. */
+:root{
+  --bg:#0A0A0B; --bg-2:#141416; --line:#26262B; --fg:#F4F1EA; --fg-2:#C9C6BE; --fg-3:#8E8E97;
+  --red:#E3302B; --red-2:#FF6B63; --red-dim:#5A1512;
+  --speech:#3C3C44; --clip:#E3302B; --zoom:#FF9D3B; --cut:#1C1C20; --cap:#8ED9B4;
+  --display:'Space Grotesk', Arial, sans-serif; --body:'Public Sans', Arial, sans-serif; --mono:'IBM Plex Mono', 'Courier New', monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);line-height:1.5;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0;overflow-x:hidden}
+a{color:var(--red-2)}
+.wrap{max-width:1160px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid var(--line);gap:16px;flex-wrap:wrap}
+.logo{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.5px}
+.logo span{color:var(--red)}
+.mono{font-family:var(--mono);font-size:13px;color:var(--fg-3);letter-spacing:1px;text-transform:uppercase}
+.mono b{color:var(--fg);font-weight:500}
+section{padding:72px 0 8px}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin:0 0 14px}
+h1{font-family:var(--display);font-size:clamp(64px,13vw,170px);line-height:.92;margin:0;letter-spacing:-.03em;color:transparent;-webkit-text-stroke:2px var(--red);text-wrap:balance}
+h2{font-family:var(--display);font-size:clamp(30px,4.4vw,52px);line-height:1.08;margin:0 0 18px;text-wrap:balance;max-width:20ch}
+.lead{font-size:clamp(18px,2.1vw,24px);color:var(--fg-2);max-width:62ch;margin:18px 0 30px}
+.stage{position:relative;border:1px solid var(--line);border-radius:14px;background:var(--bg-2);overflow:hidden}
+.stage canvas{display:block;width:100%;height:auto}
+.hud{position:absolute;left:14px;top:12px;display:flex;gap:8px;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:12px;color:var(--fg-2);background:rgba(10,10,11,.86);border:1px solid var(--line);border-radius:6px;padding:5px 9px}
+.pill b{color:var(--fg);font-weight:500}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--fg-3);padding:12px 0 0;align-items:center}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:24px;min-width:0}
+.card h3{font-family:var(--display);font-size:21px;margin:0 0 10px}
+.card p,.card li{color:var(--fg-2);font-size:16px;margin:0}
+.card ul{margin:0;padding-left:18px}
+.card.red{border-color:var(--red-dim);background:#17100F}
+.num{font-family:var(--mono);font-size:46px;color:var(--fg);line-height:1;margin:6px 0 6px;font-variant-numeric:tabular-nums}
+.num small{font-size:15px;color:var(--fg-3);font-family:var(--body)}
+.steps{counter-reset:k;margin:0;padding:0}
+.steps li{list-style:none;position:relative;padding-left:44px;margin:0 0 14px;color:var(--fg-2);font-size:17px}
+.steps li::before{counter-increment:k;content:counter(k);position:absolute;left:0;top:0;width:28px;height:28px;border-radius:6px;background:var(--red);color:#0A0A0B;font-family:var(--mono);font-weight:500;font-size:14px;display:flex;align-items:center;justify-content:center}
+.steps li b{color:var(--fg)}
+table{width:100%;border-collapse:collapse;font-size:16px}
+th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--fg-3);font-weight:500}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--fg)}
+td.hi{color:var(--red-2);font-weight:600}
+.tscroll{overflow-x:auto}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--red)}
+.big{font-family:var(--display);font-size:clamp(28px,4vw,46px);line-height:1.1;color:var(--fg);margin:0}
+.big span{color:var(--red)}
+footer{border-top:1px solid var(--line);margin-top:56px;padding:22px 0 44px;color:var(--fg-3);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+button.btn{font:600 14px var(--body);background:transparent;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px 14px;cursor:pointer}
+button.btn:hover{border-color:var(--red)}
+button.btn:focus-visible{outline:2px solid var(--red-2);outline-offset:2px}
+/* bloky, které agenti „pokládají“ */
+.blk{opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease}
+.blk.on{opacity:1;transform:none}
+.built .blk{opacity:1;transform:none;transition:none}
+.blk.typing{box-shadow:inset 3px 0 0 var(--red)}
+table{table-layout:fixed}
+.blk.on{animation:settle .5s ease-out}
+@keyframes settle{0%{filter:brightness(1.6)}100%{filter:brightness(1)}}
+/* vrstva kurzorů */
+#sw{position:fixed;inset:0;pointer-events:none;z-index:50}
+.cur{position:absolute;left:0;top:0;will-change:transform;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+.cur svg{display:block}
+.cur .lb{position:absolute;left:16px;top:16px;font:500 11px var(--mono);color:#0A0A0B;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.sel{position:absolute;border:1.5px solid var(--red);border-radius:4px;opacity:0;transition:opacity .18s}
+.sel.on{opacity:1}
+.sel b{position:absolute;left:-1px;top:-22px;font:500 11px var(--mono);color:#0A0A0B;background:var(--red);padding:2px 7px;border-radius:4px 4px 0 0;white-space:nowrap}
+.sel i{position:absolute;width:7px;height:7px;background:#0A0A0B;border:1.5px solid var(--red);border-radius:1px}
+.sel i:nth-child(2){left:-4px;top:-4px}.sel i:nth-child(3){right:-4px;top:-4px}.sel i:nth-child(4){left:-4px;bottom:-4px}.sel i:nth-child(5){right:-4px;bottom:-4px}
+.ring{position:absolute;width:26px;height:26px;border:2px solid var(--red);border-radius:50%;transform:translate(-13px,-13px) scale(.3);opacity:.9;animation:ring .5s ease-out forwards}
+@keyframes ring{to{transform:translate(-13px,-13px) scale(1.6);opacity:0}}
+#sw{transition:opacity 1s ease}
+#sw.off{opacity:0}
+#build{transition:opacity .8s ease}
+#build.off{opacity:0}
+#build{position:fixed;right:max(16px, env(safe-area-inset-right, 0px));bottom:max(16px, env(safe-area-inset-bottom, 0px));z-index:51;font-family:var(--mono);font-size:12px;color:var(--fg-2);background:rgba(10,10,11,.9);border:1px solid var(--line);border-radius:8px;padding:8px 12px;display:flex;gap:10px;align-items:center}
+#build .dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1.4s infinite}
+#build.done .dot{animation:none;background:var(--cap)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(227,48,43,.6)}100%{box-shadow:0 0 0 10px rgba(227,48,43,0)}}
+@media (max-width:820px){.grid{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}section{padding-top:52px}}
+@media (prefers-reduced-motion:reduce){.blk{opacity:1;transform:none;transition:none}#sw,#build .dot{display:none}}
+</style>
+
+<div id="sw" aria-hidden="true"></div>
+<div id="build" aria-live="polite"><span class="dot"></span><span><b id="b-agents">8</b> agentů · vrstvy <b id="b-done">0</b>/<b id="b-total">0</b></span></div>
+
+<div class="wrap">
+<header class="top blk">
+  <div class="logo">Edit<span>Twin</span></div>
+  <div class="mono">motor 3.11 · beta <b>listopad 2026</b></div>
+</header>
+
+<section id="hero">
+  <p class="eyebrow blk">// editor, který se naučí tvůj střih</p>
+  <h1 class="blk">EDITTWIN</h1>
+  <p class="lead blk">Z jednoho surového videa a jeho hotové verze zjistí, jak tvůrce stříhá – a další videa sestříhá stejně. Tohle je půl minuty toho, co udělá s dvanáctiminutovým videem.</p>
+  <div class="stage blk">
+    <canvas id="c" width="1160" height="400" aria-label="Animace: časová osa videa, ze které program vyhazuje ticha, vkládá klipy a přibližuje obraz"></canvas>
+    <div class="hud">
+      <span class="pill"><b id="phase">čekám na stavbu</b></span>
+      <span class="pill">ticha <b id="n-cuts">0</b></span>
+      <span class="pill">klipy <b id="n-clips">0</b></span>
+      <span class="pill">zoom <b id="n-zooms">0</b></span>
+      <span class="pill">délka <b id="n-len">11:29</b></span>
+    </div>
+  </div>
+  <div class="legend blk">
+    <span><i style="background:var(--speech)"></i>řeč</span>
+    <span><i style="background:var(--cut);border:1px solid var(--line)"></i>vyhozené ticho</span>
+    <span><i style="background:var(--clip)"></i>vložený klip z tvůrcových videí</span>
+    <span><i style="background:var(--zoom)"></i>přiblížení</span>
+    <span><i style="background:var(--cap)"></i>titulky</span>
+    <span style="margin-left:auto"><button class="btn" id="replay" type="button">Přehrát znovu</button></span>
+  </div>
+</section>
+
+<section id="problem">
+  <p class="eyebrow blk">// proč</p>
+  <h2 class="blk">Malý tvůrce stráví střihem víc času než natáčením.</h2>
+  <div class="grid">
+    <div class="card blk"><h3>Dnes</h3><p>Hodiny u střihu na každé video: vyhazování pauz, přibližování, titulky, hledání klipů. Střihač stojí stovky až tisíce korun za video – pro kanál s pár tisíci odběratelů to nedává smysl.</p></div>
+    <div class="card blk"><h3>Co nabízíme</h3><p>Program se naučí střih z toho, co tvůrce už natočil. Nové video dostane hrubý sestřih ve svém stylu a dodělá jen to, co chce jinak.</p></div>
+    <div class="card red blk"><h3>Co to není</h3><p>Hotové video bez tvůrce. Vtip a vkus zůstávají jeho – my mu bereme mechanickou práci, ne rozhodování.</p></div>
+  </div>
+  <div class="card blk" style="margin-top:16px"><h3>Proč ne CapCut, Descript nebo Opus Clip</h3><p>Ty umí auto-titulky, vyhazování ticha a shorts – pro všechny stejně. Žádný z nich se neučí střih konkrétního tvůrce z jeho vlastních hotových videí: kde přesně stříhá, jak přibližuje, které klipy vkládá a k jakým větám. To je jediná věc, kterou děláme jinak, a stojí na ní celý produkt.</p></div>
+</section>
+
+<section id="jak">
+  <p class="eyebrow blk">// jak to funguje</p>
+  <h2 class="blk">Dvě videa dovnitř, balíček ven.</h2>
+  <div class="grid2">
+    <div class="card blk">
+      <ol class="steps">
+        <li><b>Tvůrce pošle dvě videa</b> – surové a svoji hotovou verzi.</li>
+        <li><b>Program porovná slovo po slovu</b>, co vyhodil, kde přiblížil, co vložil – a uloží si to jako profil.</li>
+        <li><b>Další video sestříhá podle profilu</b>: pauzy, zakoktání, přiblížení, klipy, titulky, hudba, tři Shorts.</li>
+        <li><b>Tvůrce klikne sedí / nesedí</b> a profil se zpřesní. Každý další sestřih je blíž jeho ruce.</li>
+      </ol>
+    </div>
+    <div class="card blk">
+      <h3>Co vidí navíc</h3>
+      <ul>
+        <li>čte text z obrazovky – zprávy v chatu, oznámení hry (OCR)</li>
+        <li>umí provést „režii“: text přes obraz, efekty, přiblížení na konkrétní místo, zvuk</li>
+        <li>vede knihovnu vsuvek tvůrce – jeho memy, zvuky, obrázky s poznámkou, kdy je používá</li>
+        <li>všechno běží lokálně, videa tvůrců nikam neodcházejí</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="cisla">
+  <p class="eyebrow blk">// skutečná čísla z jednoho videa</p>
+  <h2 class="blk">Dvanáct minut hry, 51 střihů, 14 klipů.</h2>
+  <div class="grid">
+    <div class="card blk"><p class="num">11:29 → 12:05 <small>surové → hotové</small></p><p>Render 10 minut na obyčejném notebooku, bez grafické karty.</p></div>
+    <div class="card blk"><p class="num">51 · 14 · 23 <small>střihů · klipů · přiblížení</small></p><p>Práh pauz 1,7 s, dvě přiblížení za minutu, knihovna 10 klipů – všechno naučené z jednoho páru videí.</p></div>
+    <div class="card blk"><p class="num">170 <small>automatických testů</small></p><p>11 verzí motoru za pět týdnů; každá změna má číslo, ne pocit.</p></div>
+  </div>
+</section>
+
+<section id="mereni">
+  <p class="eyebrow blk">// měříme, ne odhadujeme</p>
+  <h2 class="blk">Kolik vsuvek trefí tam, kam je dal tvůrce.</h2>
+  <p class="lead blk">Vzali jsme video, které tvůrce sám sestříhal (18 vsuvek), schovali jeho verzi a nechali program i jazykový model hádat naslepo. Trefa = do 3 sekund od jeho místa.</p>
+  <div class="card blk">
+    <div class="tscroll">
+    <table>
+      <tr><th>kdo</th><th>trefeno z 18</th><th>poznámka</th></tr>
+      <tr><td>náhoda</td><td class="n">~1</td><td>18 náhodných časů, průměr z 2 000 pokusů</td></tr>
+      <tr><td>motor sám (pravidla + statistika)</td><td class="n">5</td><td>najde místa, kde se shodují slova s klipem z knihovny</td></tr>
+      <tr><td>„režisér“ (jazykový model + text z obrazovky)</td><td class="n">7</td><td>najde místa podle obsahu: kdo je offline, co kdo napsal</td></tr>
+      <tr><td>motor + režisér</td><td class="n hi">8</td><td>dnešní strop; zbytek jsou místa, kde tvůrce zvolil jinak – ne nutně lépe</td></tr>
+    </table>
+    </div>
+    <div class="bar" aria-hidden="true"><i style="width:44%"></i></div>
+    <p style="margin-top:10px;font-size:14px;color:var(--fg-3)">44 % míst přesně podle tvůrce. Pro tvůrce to znamená hrubý návrh, který dodělá za zlomek času – a každou opravou ho zpřesní.</p>
+  </div>
+</section>
+
+<section id="plan">
+  <p class="eyebrow blk">// plán a model</p>
+  <h2 class="blk">Nejdřív zdarma za hodnocení, pak za kus, pak předplatné.</h2>
+  <div class="grid">
+    <div class="card blk"><h3>Listopad 2026</h3><p class="num">0 Kč</p><p>Beta: 3–5 tvůrců dostane sestřih zdarma za svoje videa a poctivé hodnocení.</p></div>
+    <div class="card blk"><h3>Prosinec 2026</h3><p class="num">400–800 Kč <small>za video (odhad)</small></p><p>Sestřih jako služba: tvůrce pošle video, dostane balíček. Náklad na video ~20 Kč plus naše práce.</p></div>
+    <div class="card blk"><h3>Únor 2027</h3><p class="num">199–999 Kč <small>měsíčně (odhad)</small></p><p>Předplatné na webu, zpracování na serveru. Fixní náklady ~2 000 Kč měsíčně, od 7–10 platících na nule.</p></div>
+  </div>
+  <p class="big blk" style="margin-top:28px">Prodává se <span>ušetřený čas</span> tvůrce, ne „AI“.</p>
+</section>
+
+<section id="data">
+  <p class="eyebrow blk">// jak pracujeme s videi tvůrců</p>
+  <h2 class="blk">Videa zůstávají u nás, nikam nejdou.</h2>
+  <div class="grid2">
+    <div class="card blk"><h3>Dnes</h3><ul>
+      <li>tvůrce pošle odkaz na surové a hotové video</li>
+      <li>zpracování jen na našem počítači – žádný cloud, žádná třetí strana</li>
+      <li>ve videu je obličej, hlas a často jména lidí z chatu – bereme to jako osobní údaje</li>
+      <li>na požádání všechno smažeme; zpět jde ZIP se sestřihem, Shorts a zprávou</li>
+    </ul></div>
+    <div class="card blk"><h3>Plán od prosince</h3><ul>
+      <li>server v EU, účty tvůrců, nahrávání přes web</li>
+      <li>„režisér“: jazykovému modelu přes API se posílá přepis řeči a text z obrazovky – ne samotné video</li>
+      <li>platby kartou, předplatné</li>
+      <li>hudba z YouTube Audio Library, klipy jen z videí daného tvůrce</li>
+    </ul></div>
+  </div>
+</section>
+
+<section id="pravo">
+  <p class="eyebrow blk">// co teď řešíme s právníkem</p>
+  <h2 class="blk">Firma, souhlasy, údaje.</h2>
+  <div class="grid">
+    <div class="card blk"><h3>1 · Založení s.r.o.</h3><p>Zakladatel je nezletilý (15). Kdo bude společník a jednatel, jestli je nutný souhlas soudu, kolik to stojí a jak dlouho trvá.</p></div>
+    <div class="card blk"><h3>2 · Smlouva s tvůrci</h3><p>Souhlas se zpracováním videí, smazání na požádání, zákaz dalšího šíření z naší strany, co dostanou zdarma v betě.</p></div>
+    <div class="card blk"><h3>3 · Ochrana údajů</h3><p>Dnes vlastní PC, později server; posílání přepisu do API v USA – jestli je to předávání údajů a co k tomu potřebujeme.</p></div>
+    <div class="card blk"><h3>4 · Web a platby</h3><p>Čekací listina (jen e-mail) hned; obchodní podmínky, reklamace a zásady ochrany údajů, až se bude platit.</p></div>
+    <div class="card blk"><h3>5 · Autorská práva</h3><p>Kód psaný s pomocí AI nástrojů, hudba z YouTube Audio Library, klipy vystřižené z videí tvůrce.</p></div>
+    <div class="card blk"><h3>6 · Do založení firmy</h3><p>Jestli může první zakázky fakturovat rodič a založit účet na API na svou kartu, který pak převedeme na firmu.</p></div>
+  </div>
+</section>
+
+<section id="kdo">
+  <p class="eyebrow blk">// kde jsme</p>
+  <div class="grid2">
+    <div class="card blk">
+      <h3>Stav</h3>
+      <ul>
+        <li>funkční prototyp, běží na vlastním počítači</li>
+        <li>první tvůrce otestován, známka 3 z 5 – a víme přesně proč</li>
+        <li>s.r.o. v jednání s právníkem (listopad 2026)</li>
+        <li>další krok: 3–5 cizích tvůrců v betě</li>
+      </ul>
+    </div>
+    <div class="card blk">
+      <h3>Kontakt</h3>
+      <p>Filip Mrkvička · zakladatel · 15 let · Libochovice<br>Kateřina Mrkvičková · dospělý zástupce, navrhovaná jednatelka s.r.o.</p>
+      <p style="font-family:var(--mono);margin-top:8px">fifamrkvicka@seznam.cz<br>606 748 364</p>
+    </div>
+  </div>
+</section>
+
+<footer class="blk">
+  <span>EditTwin · Libochovice · 2026</span>
+  <span>Čísla jsou ze skutečného sestřihu z 26. 10. 2026 a z měření 5.–6. 11. 2026. Ceny jsou odhady.</span>
+</footer>
+</div>
+
+<script>
+(function(){
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const blks=[...document.querySelectorAll('.blk')];
+  const total=blks.length; document.getElementById('b-total').textContent=total;
+  const sw=document.getElementById('sw'), done=document.getElementById('b-done'), buildEl=document.getElementById('build');
+  let built=0, heroStarted=false;
+  // ---------- roj kurzorů ----------
+  const names=[['layout','#FF6B63'],['copy','#FFD27A'],['data','#8ED9B4'],['motion','#8FB3FF'],['ticha','#F4F1EA'],['klipy','#E3302B'],['zoom','#FF9D3B'],['titulky','#C9C6BE']];
+  const MAXBUSY=3; // kolik agentů pracuje naráz
+  const curs=names.map(([n,c],i)=>{ const d=document.createElement('div'); d.className='cur';
+    d.innerHTML='<svg width="16" height="22" viewBox="0 0 16 22"><path d="M1 1l0 17 4.6-4.2L9 21l3-1.4-3.4-7.2H15z" fill="'+c+'" stroke="#0A0A0B" stroke-width="1"/></svg>';
+    sw.appendChild(d); const px=innerWidth*(0.15+0.7*Math.random()), py=innerHeight*(0.2+0.6*Math.random());
+    return {el:d,name:n,col:c,x:px,y:py,tx:px,ty:py,busy:null,t:0,sel:null,phase:0,parkX:px,parkY:py}; });
+  const queue=[];
+  function rect(b){ const r=b.getBoundingClientRect(); return {x:r.left,y:r.top,w:r.width,h:r.height}; }
+  function typeIn(b){ // blok se ukáže a jeho text se dopisuje po písmenech; velikost bloku se zamkne, ať nic neskáče
+    const r0=b.getBoundingClientRect(); b.style.minHeight=Math.ceil(r0.height)+'px';
+    b.querySelectorAll('h1,h2,h3,p,li,td,th,span,b,small').forEach(e=>{ const rr=e.getBoundingClientRect(); if(rr.height>0&&getComputedStyle(e).display!=='inline'){ e.style.minHeight=Math.ceil(rr.height)+'px'; } });
+    const walker=document.createTreeWalker(b,NodeFilter.SHOW_TEXT); const nodes=[]; let n;
+    while((n=walker.nextNode())){ if(n.nodeValue.trim()&&!['SCRIPT','STYLE','CANVAS'].includes(n.parentNode.tagName)){ nodes.push([n,n.nodeValue]); n.nodeValue=''; } }
+    b.classList.add('on'); b.classList.add('typing'); let i=0, pos=0, carry=0, last=performance.now(); const CPS=45; const CARET='\u258d'; // stejná rychlost všude: 45 znaků za sekundu podle času, ne podle snímků
+    (function step(now){ if(i>=nodes.length){ b.classList.remove('typing'); return; } carry+=(now-last)/1000*CPS; last=now; let add=Math.floor(carry); carry-=add;
+      while(add>0&&i<nodes.length){ const [node,full]=nodes[i]; const take=Math.min(add,full.length-pos); pos+=take; add-=take; node.nodeValue=full.slice(0,pos)+(pos<full.length?CARET:''); if(pos>=full.length){ i++; pos=0; } }
+      requestAnimationFrame(step); })(performance.now());
+  }
+  function ring(x,y){ const r=document.createElement('div'); r.className='ring'; r.style.left=x+'px'; r.style.top=y+'px'; sw.appendChild(r); setTimeout(()=>r.remove(),520); }
+  function swarmDone(){ sw.classList.add('off'); buildEl.classList.add('done'); buildEl.querySelector('span:last-child').innerHTML='hotovo · '+total+'/'+total+' vrstev'; setTimeout(()=>{ sw.style.display='none'; },1100); setTimeout(()=>buildEl.classList.add('off'),5000); }
+  function tick(){
+    const busyN=curs.filter(k=>k.busy).length;
+    if(busyN<MAXBUSY&&queue.length&&Math.random()<0.04){ const c=curs.find(k=>!k.busy); const b=queue.shift(); const r=rect(b); c.busy=b; c.t=0; c.phase=0;
+      c.tx=r.x; c.ty=r.y;                                                                                           // letí k levému hornímu rohu
+      const s=document.createElement('div'); s.className='sel'; s.innerHTML='<b>vrstva '+(built+busyN+1)+'</b><i></i><i></i><i></i><i></i>'; sw.appendChild(s); c.sel=s; }
+    for(const c of curs){
+      if(c.busy){ c.t++; const r=rect(c.busy);
+        const near=Math.abs(c.tx-c.x)<2.5&&Math.abs(c.ty-c.y)<2.5;
+        if(c.phase===0&&near&&c.t>20){ c.phase=1; c.t=0; c.sel.classList.add('on'); ring(c.x,c.y); c.tx=r.x+r.w; c.ty=r.y+r.h; } // chytne roh a táhne
+        if(c.phase===1){ const w=Math.max(0,Math.min(r.w,c.x-r.x)), h=Math.max(0,Math.min(r.h,c.y-r.y));            // pole se roztahuje za kurzorem
+          c.sel.style.left=r.x+'px'; c.sel.style.top=r.y+'px'; c.sel.style.width=w+'px'; c.sel.style.height=h+'px';
+          if(near&&c.t>25){ c.phase=2; c.t=0; ring(c.x,c.y); typeIn(c.busy); } }                                   // pustí roh → pole je hotové, začne psát
+        else if(c.phase===2){ c.sel.style.left=r.x+'px'; c.sel.style.top=r.y+'px'; c.sel.style.width=r.w+'px'; c.sel.style.height=r.h+'px';
+          if(c.t>30){ built++; done.textContent=built; const s=c.sel; setTimeout(()=>s.remove(),250); c.sel=null; c.busy=null; c.phase=0; c.t=0;
+            c.tx=c.x+(Math.random()-.5)*80; c.ty=c.y+(Math.random()-.5)*50; if(built>=total) swarmDone(); } }
+        c.x+=(c.tx-c.x)*(c.phase===0?.06:.07); c.y+=(c.ty-c.y)*(c.phase===0?.06:.07);
+      } else { c.x+=(c.tx-c.x)*.04; c.y+=(c.ty-c.y)*.04; }
+      c.el.style.transform='translate('+c.x+'px,'+c.y+'px)';
+    }
+    if(built<total) requestAnimationFrame(tick);
+  }
+  if(reduce){ document.body.classList.add('built'); done.textContent=total; swarmDone(); startHero(); }
+  else { blks.forEach(b=>queue.push(b)); requestAnimationFrame(tick); }
+  // ---------- animace časové osy ----------
+  const cv=document.getElementById('c'), ctx=cv.getContext('2d'); const W=cv.width, H=cv.height;
+  const css=getComputedStyle(document.documentElement); const v=n=>css.getPropertyValue(n).trim();
+  const C={speech:v('--speech'),clip:v('--clip'),zoom:v('--zoom'),cut:v('--cut'),line:v('--line'),fg:v('--fg'),fg3:v('--fg-3'),bg:v('--bg-2'),cap:v('--cap')};
+  let seed=7; const rnd=()=>{seed=(seed*9301+49297)%233280; return seed/233280};
+  const segs=[]; let t=0; const total_s=689;
+  while(t<total_s){ const sp=6+rnd()*22; const gap=rnd()<0.7?0.6+rnd()*2.6:0; segs.push({s:t,e:Math.min(total_s,t+sp),gap:gap}); t+=sp+gap; }
+  const clipAt=[28,37,48,82,91,99,128,158,177,191,202,227,279,358]; const zoomAt=[]; for(let i=0;i<23;i++) zoomAt.push(12+i*29+rnd()*8);
+  const ag=[{name:'ticha',col:'#F4F1EA',x:60,y:120},{name:'klipy',col:'#E3302B',x:900,y:300},{name:'zoom',col:'#FF9D3B',x:500,y:60},{name:'titulky',col:'#8ED9B4',x:300,y:340}];
+  const DUR=26000; let t0=0, running=false;
+  const el=id=>document.getElementById(id); const x0=40,x1=W-40,y=180,h=56;
+  function X(sec,shrink){ let acc=0; for(const g of segs){ if(sec<=g.s) break; acc+=Math.max(0,Math.min(sec,g.e)-g.s); if(sec>g.e) acc+=g.gap*(1-shrink);} const tn=total_s-segs.reduce((a,g)=>a+g.gap,0)*shrink; return x0+(x1-x0)*acc/tn; }
+  function fmt(s){s=Math.max(0,Math.round(s)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+  function cursor(c){ ctx.save(); ctx.translate(c.x,c.y); ctx.fillStyle=c.col; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,18); ctx.lineTo(5,13); ctx.lineTo(9,21); ctx.lineTo(12,19); ctx.lineTo(8,11); ctx.lineTo(15,11); ctx.closePath(); ctx.fill();
+    ctx.font='500 11px "IBM Plex Mono", monospace'; const w=ctx.measureText(c.name).width+12; ctx.fillRect(14,16,w,18); ctx.fillStyle='#0A0A0B'; ctx.fillText(c.name,20,29); ctx.restore(); }
+  function frame(now){
+    if(!running) return; const p=reduce?1:Math.min(1,(now-t0)/DUR);
+    const shrink=Math.max(0,Math.min(1,(p-.18)/.27)); const nClips=Math.floor(Math.max(0,Math.min(1,(p-.45)/.25))*clipAt.length); const nZoom=Math.floor(Math.max(0,Math.min(1,(p-.7)/.18))*zoomAt.length); const capK=Math.max(0,Math.min(1,(p-.88)/.12));
+    ctx.clearRect(0,0,W,H); ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.font='400 11px "IBM Plex Mono", monospace'; ctx.fillStyle=C.fg3;
+    for(let m=0;m<=11;m++){ const xx=x0+(x1-x0)*m/11.5; ctx.beginPath(); ctx.moveTo(xx,y-30); ctx.lineTo(xx,y+h+30); ctx.stroke(); ctx.fillText(m+':00',xx+4,y-36); }
+    for(const g of segs){ const a=X(g.s,shrink), b=X(g.e,shrink); ctx.fillStyle=C.speech; ctx.fillRect(a,y,Math.max(2,b-a-1),h); if(g.gap>0){ const ga=X(g.e,shrink), gb=X(g.e+g.gap,shrink); if(gb-ga>1.5){ ctx.fillStyle=C.cut; ctx.fillRect(ga,y,gb-ga,h);} } }
+    for(let i=0;i<nClips;i++){ const xx=X(clipAt[i],shrink); const k=Math.min(1,(p-.45-i*.25/clipAt.length)*12); const dy=(1-k)*-40; ctx.fillStyle=C.clip; ctx.fillRect(xx-7,y-8+dy,14,h+16); ctx.strokeStyle=C.bg; ctx.strokeRect(xx-7,y-8+dy,14,h+16); }
+    for(let i=0;i<nZoom;i++){ const xx=X(zoomAt[i],shrink); ctx.fillStyle=C.zoom; ctx.beginPath(); ctx.moveTo(xx,y-14); ctx.lineTo(xx-7,y-26); ctx.lineTo(xx+7,y-26); ctx.closePath(); ctx.fill(); }
+    if(capK>0){ ctx.fillStyle='rgba(142,217,180,.22)'; ctx.fillRect(x0,y+h+18,(x1-x0)*capK,14); ctx.fillStyle=C.cap; ctx.font='500 11px "IBM Plex Mono", monospace'; ctx.fillText('titulky · zvýrazněné slovo',x0,y+h+58); }
+    if(p<.18){ const head=x0+(x1-x0)*(p/.18); ctx.strokeStyle=C.fg; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(head,y-30); ctx.lineTo(head,y+h+30); ctx.stroke(); }
+    const tg=[ p<.45?[X(Math.min(total_s,Math.max(0,p-.18)/.27*total_s),shrink),y+h+6]:[x0-10,y+h+40],
+               p>=.45&&p<.7?[X(clipAt[Math.min(clipAt.length-1,nClips)],shrink),y-20]:[x1-80,y+h+40],
+               p>=.7&&p<.88?[X(zoomAt[Math.min(zoomAt.length-1,nZoom)],shrink),y-40]:[x0+200,y-70],
+               p>=.88?[x0+(x1-x0)*capK,y+h+22]:[x0+400,y+h+50] ];
+    ag.forEach((c,i)=>{ c.x+=(tg[i][0]-c.x)*(reduce?1:.08); c.y+=(tg[i][1]-c.y)*(reduce?1:.08); cursor(c); });
+    const removed=segs.reduce((a,g)=>a+g.gap,0)*shrink, added=nClips*3.1;
+    el('n-cuts').textContent=Math.round(segs.filter(g=>g.gap>0).length*shrink); el('n-clips').textContent=nClips; el('n-zooms').textContent=nZoom; el('n-len').textContent=fmt(total_s-removed+added);
+    el('phase').textContent=p<.18?'čtu video a přepis':p<.45?'vyhazuji ticha a zakoktání':p<.7?'vkládám klipy z tvůrcových videí':p<.88?'přibližuji podle hlasu':p<1?'pálím titulky':'hotovo · 12:05';
+    if(p<1) requestAnimationFrame(frame); else running=false;
+  }
+  function startHero(){ running=true; t0=performance.now(); requestAnimationFrame(frame); }
+  document.getElementById('replay').addEventListener('click',()=>{ ag.forEach(c=>{c.x=W/2;c.y=H/2}); startHero(); });
+  // pojistka: kdyby se plátno postavilo dřív, než si toho roj všimne
+  setTimeout(()=>{ if(!heroStarted&&document.querySelector('.stage').classList.contains('on')){ heroStarted=true; startHero(); } },4000);
+  setInterval(()=>{ if(!heroStarted&&document.querySelector('.stage').classList.contains('on')){ heroStarted=true; startHero(); } },1000);
+})();
+</script>
